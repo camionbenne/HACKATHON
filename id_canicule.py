@@ -24,23 +24,24 @@ canicule = xr.Dataset(
 )
 
 
-def canicule(tx,tn,seuilx,seuiln):
+def occurrence_canicule(tx,tn,seuilx,seuiln):
     times = tx.time
     longueur = tx.x
     largeur = tx.y
     for t in range(2,len(times)):
+        print(t)
         for x in range(len(longueur)):
             for y in range(len(largeur)):
                 cond1 = tx["tasmaxAdjust"].isel(time = t, x = x, y = y) >= seuilx and tn["tasminAdjust"].isel(time = t, x = x, y = y) >= seuiln
                 cond2 = tx["tasmaxAdjust"].isel(time = t-1,x = x, y = y ) >= seuilx and tn["tasminAdjust"].isel(time = t-1,x = x, y = y) >= seuiln
                 cond3 = tx["tasmaxAdjust"].isel(time = t-2,x = x, y = y) >= seuilx and tn["tasminAdjust"].isel(time = t-2,x = x, y = y) >= seuiln
                 if all([cond1, cond2, cond3]):
-                    canicule["occurrence"].loc[dict(time=t, x=x, y=y)] = 1
+                    canicule["occurrence"].data[t,y,x] = 1
                 else:
-                    canicule["occurrence"].loc[dict(time=t, x=x, y=y)] = 0
+                    canicule["occurrence"].data[t,y,x] = 0
 
 
-canicule(tx,tn,36,21)
+occurrence_canicule(tx,tn,36,21)
 print(canicule["occurrence"])
 
 
