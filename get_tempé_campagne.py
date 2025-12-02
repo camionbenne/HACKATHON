@@ -20,22 +20,26 @@ nom_fichier = f"{parametre[i_param]}_FR-Metro_CNRM-ESM2-1_ssp370_r1i1p1f2_CNRM-M
 T_data = xr.open_dataset(chemin_file + nom_fichier)
 
 def mask(data, lat_min, lat_max, lon_min, lon_max):
-    lats = data['lat'].values
-    lons = data['lon'].values
-    # Création du masque : True pour les points à garder, False ailleurs
-    mask = (lats >= lat_min) & (lats <= lat_max) & (lons >= lon_min) & (lons <= lon_max)
-
-    masked_data = np.where(mask[None, :, :], data, np.nan)
-    # Application du masque : on remplace les valeurs hors zone par np.nan
-    return np.where(mask, data, np.nan)
+    """
+    Applique un masque géographique à un DataArray.
+    data : xarray.DataArray
+    """
+    lats = data['lat']
+    lons = data['lon']
+    mask_bool = (lats >= lat_min) & (lats <= lat_max) & (lons >= lon_min) & (lons <= lon_max)
+    
+    # where garde les coordonnées et remplace les valeurs hors masque par NaN
+    return data.where(mask_bool)
 
 
 lat_min, lat_max = 48.0, 49.2
 lon_min, lon_max = 1.8, 3.6
-T_data_IDF = mask(T_data, lat_min, lat_max, lon_min, lon_max)
 
+T_data_IDF = mask(T_data[parametre[i_param]], lat_min, lat_max, lon_min, lon_max)
 
-moy_data = ds_data[parametre[i_param]].mean(dim='time', skipna=True).values - 273.15
+# Moyenne temporelle sur la zone masquée
+moy_data = T_data_IDF.mean(dim='time', skipna=True).values - 273.15
+
 
 
 
