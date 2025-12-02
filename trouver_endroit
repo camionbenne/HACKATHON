@@ -1,0 +1,22 @@
+import numpy as np
+import xarray as xr 
+
+latparis= 48.51
+lonparis= 2.20
+
+def norme_paris(lat,long,latp,lonp):
+        """Fonction qui calcule la distance euclidienne entre un point qlq et un point donnée"""
+        return (lat-latp)**2 + (lonp-long)**2
+
+
+def trouver_point(latp,lonp):
+    """Fonction qui à partir d'une latitude/lon retourne les points de grilles x,y"""
+    ds = xr.open_dataset("C:/Users/rober/Downloads/tasAdjust_FR-Metro_CNRM-ESM2-1_ssp370_r1i1p1f2_CNRM-MF_CNRM-AROME46t1_v1-r1_MF-CDFt-ANASTASIA-ALPX-3-1991-2020_day_20150101-20191231.nc")
+    ds["distance_2_paris"] = norme_paris(ds.lat,ds.lon,latp,lonp)
+    da = ds["distance_2_paris"]
+    # indices dans le tableau
+    y_idx, x_idx = np.unravel_index(da.argmin(), da.shape)
+    # coords réelles
+    y_min = da["y"][y_idx].item()
+    x_min = da["x"][x_idx].item()
+    return(y_min,x_min)
