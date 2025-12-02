@@ -28,7 +28,7 @@ moy_data = ds_data[variable].mean(dim='time', skipna=True).values - 273.15
 lats_data = ds_data['lat'].values
 lons_data = ds_data['lon'].values
 
-print("Variable tasAdjust contient des NaN partout :", ds_data['tasAdjust'].isnull().all().values)
+
 
 #############################################################
 ##################### Figure ###############################
