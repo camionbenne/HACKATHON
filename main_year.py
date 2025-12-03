@@ -77,11 +77,9 @@ def jour_canicule(occurrence_canicule):
 ###########################################
 #   AFFICHAGE
 ###########################################
-def AFFICHAGE(moy_T, anomalie_par_melun, i_param, i_periode, lat_min, lat_max, lon_min, lon_max):
+def AFFICHAGE(moy_T, anomalie_par_melun, i_param, annee, lat_min, lat_max, lon_min, lon_max):
     lats_data = moy_T['lat'].values
     lons_data = moy_T['lon'].values
-
-    periode_bis = ["2015-2019","2020-2029","2030,2039","2040-2049","2050-2059","2060-2069","2070-2079","2080-2089","2090-2099"]
 
     # Création figure avec deux sous-graphes
     fig, axs = plt.subplots(
@@ -135,7 +133,7 @@ def AFFICHAGE(moy_T, anomalie_par_melun, i_param, i_periode, lat_min, lat_max, l
     )
     cbar0 = plt.colorbar(mm0, ax=ax, orientation='vertical', shrink=0.7)
     cbar0.set_label('Température moyenne (°C)', fontsize=12)
-    ax.set_title(f"{parametre[i_param]} moyenne en periode de canicule {periode_bis[i_periode]}", fontsize=14)
+    ax.set_title(f"{parametre[i_param]} moyenne en periode de canicule en {annee}", fontsize=14)
 
     # --- Anomalie par rapport à Melun ---
     ax = axs[1]
@@ -168,14 +166,14 @@ def AFFICHAGE(moy_T, anomalie_par_melun, i_param, i_periode, lat_min, lat_max, l
     )
     cbar1 = plt.colorbar(mm1, ax=ax, orientation='vertical', shrink=0.7)
     cbar1.set_label('Anomalie de température (°C)', fontsize=12)
-    ax.set_title(f"Anomalie de {parametre[i_param]} en canicule par rapport à Melun {periode_bis[i_periode]}", fontsize=14)
+    ax.set_title(f"Anomalie de {parametre[i_param]} en canicule par rapport à Melun en {annee}", fontsize=14)
     
 
 
     # Sauvegarde
-    chemin_fig = "Cartes/"
+    chemin_fig = "Cartes/Annuel/"
     os.makedirs(chemin_fig, exist_ok=True)
-    plt.savefig(chemin_fig + f"carte_{parametre[i_param]}_IDF_{periode_bis[i_periode]}.png", dpi=200)
+    plt.savefig(chemin_fig + f"carte_{parametre[i_param]}_IDF_{annee}.png", dpi=200)
     plt.close()
 
 ################################################################################################################################################################
@@ -203,7 +201,8 @@ lat_min, lat_max = 48.3, 49.5
 lon_min, lon_max = 1.5, 3.3
 
 
-for i_periode in range(0,9):
+for i_periode in range(1,2):
+    
     i_param = 0
     T_data = xr.open_dataset(El_Allocator(i_param,i_periode))
 
@@ -238,38 +237,40 @@ for i_periode in range(0,9):
     occurrence_canicule_IDF = occurrence_canicule(Tx_data_IDF, Tn_data_IDF, seuilx_IDF, seuiln_IDF)
     jour_canicule_IDF = jour_canicule(occurrence_canicule_IDF)
 
+    annee = list(np.unique(jour_canicule_IDF["time"].dt.year))
 
-    ###########################################
-    #   Restriction des données aux canicules
-    ###########################################
-    T_IDF_canicule = T_data_IDF.sel(time=jour_canicule_IDF)#.sel(time='2059')
-    T_Melun_canicule = T_data_Melun.sel(time=jour_canicule_IDF)#.sel(time='2059')
+    for year in annee:
+        ###########################################
+        #   Restriction des données aux canicules
+        ###########################################
+        T_IDF_canicule = T_data_IDF.sel(time=jour_canicule_IDF).sel(time=str(year))
+        T_Melun_canicule = T_data_Melun.sel(time=jour_canicule_IDF).sel(time=str(year))
 
-    Tx_IDF_canicule = Tx_data_IDF.sel(time=jour_canicule_IDF)#.sel(time='2059')
-    Tx_Melun_canicule = Tx_data_Melun.sel(time=jour_canicule_IDF)#.sel(time='2059')
+        Tx_IDF_canicule = Tx_data_IDF.sel(time=jour_canicule_IDF).sel(time=str(year))
+        Tx_Melun_canicule = Tx_data_Melun.sel(time=jour_canicule_IDF).sel(time=str(year))
 
-    Tn_IDF_canicule = Tn_data_IDF.sel(time=jour_canicule_IDF)#.sel(time='2059')
-    Tn_Melun_canicule = Tn_data_Melun.sel(time=jour_canicule_IDF)#.sel(time='2059')
+        Tn_IDF_canicule = Tn_data_IDF.sel(time=jour_canicule_IDF).sel(time=str(year))
+        Tn_Melun_canicule = Tn_data_Melun.sel(time=jour_canicule_IDF).sel(time=str(year))
 
 
-    ###########################################
-    #   Moyennes temporelles
-    ###########################################
-    i_param = 2
+        ###########################################
+        #   Moyennes temporelles
+        ###########################################
+        i_param = 2
 
-    if i_param==0:
-        moy_T_IDF_canicule = T_IDF_canicule.mean(dim="time", skipna=True) - 273.15
-        moy_T_melun_canicule = T_Melun_canicule.mean(dim="time", skipna=True) - 273.15
+        if i_param==0:
+            moy_T_IDF_canicule = T_IDF_canicule.mean(dim="time", skipna=True) - 273.15
+            moy_T_melun_canicule = T_Melun_canicule.mean(dim="time", skipna=True) - 273.15
 
-    elif i_param==1:
-        moy_T_IDF_canicule = Tx_IDF_canicule.mean(dim="time", skipna=True) - 273.15
-        moy_T_melun_canicule = Tx_Melun_canicule.mean(dim="time", skipna=True) - 273.15
+        elif i_param==1:
+            moy_T_IDF_canicule = Tx_IDF_canicule.mean(dim="time", skipna=True) - 273.15
+            moy_T_melun_canicule = Tx_Melun_canicule.mean(dim="time", skipna=True) - 273.15
 
-    elif i_param==2:
-        moy_T_IDF_canicule = Tn_IDF_canicule.mean(dim="time", skipna=True) - 273.15
-        moy_T_melun_canicule = Tn_Melun_canicule.mean(dim="time", skipna=True) - 273.15
+        elif i_param==2:
+            moy_T_IDF_canicule = Tn_IDF_canicule.mean(dim="time", skipna=True) - 273.15
+            moy_T_melun_canicule = Tn_Melun_canicule.mean(dim="time", skipna=True) - 273.15
 
-    anomalie_par_melun = moy_T_IDF_canicule - moy_T_melun_canicule
+        anomalie_par_melun = moy_T_IDF_canicule - moy_T_melun_canicule
 
-    AFFICHAGE(moy_T_IDF_canicule, anomalie_par_melun,i_param, i_periode, lat_min, lat_max, lon_min, lon_max)
-    print(periode[i_periode])
+        AFFICHAGE(moy_T_IDF_canicule, anomalie_par_melun,i_param, annee, lat_min, lat_max, lon_min, lon_max)
+        print(annee)
