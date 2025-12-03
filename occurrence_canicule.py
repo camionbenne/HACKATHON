@@ -42,3 +42,8 @@ def occurrence_canicule(tx,tn,seuilx,seuiln):
     canicule = xr.Dataset({"occurrence": occ.astype(int)})
     mask_ete = canicule["time"].dt.month.isin(liste_ete)
     return canicule.sel(time=mask_ete) #pour exploiter les occurences faire canicule["occurrence"]
+
+def jour_canicule(occurence_canicule):
+    """Fonction qui retourne une liste avec les jours de canicule"""
+    ds = occurence_canicule.where(occurence_canicule["occurrence"].sum(dim = ("x","y"))>0,drop = True)
+    return ds.time
