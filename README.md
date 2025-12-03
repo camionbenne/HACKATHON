@@ -8,3 +8,4 @@ Pour la branche main
 Le fichier central est main.py pour le lancer il faut télécharger les bibliothèque du require.
 Le fichier main produit des cartes moyennées sur toutes les périodes de 10 ans de l'indice ICU .
 
+Les cartes produites sont disponibles dans le répertoire cartes.
