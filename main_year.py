@@ -201,7 +201,7 @@ lat_min, lat_max = 48.3, 49.5
 lon_min, lon_max = 1.5, 3.3
 
 
-for i_periode in range(1,2):
+for i_periode in range(0,9):
     
     i_param = 0
     T_data = xr.open_dataset(El_Allocator(i_param,i_periode))
@@ -238,7 +238,7 @@ for i_periode in range(1,2):
     jour_canicule_IDF = jour_canicule(occurrence_canicule_IDF)
 
     annee = list(np.unique(jour_canicule_IDF["time"].dt.year))
-
+    
     for year in annee:
         ###########################################
         #   Restriction des données aux canicules
@@ -272,5 +272,5 @@ for i_periode in range(1,2):
 
         anomalie_par_melun = moy_T_IDF_canicule - moy_T_melun_canicule
 
-        AFFICHAGE(moy_T_IDF_canicule, anomalie_par_melun,i_param, annee, lat_min, lat_max, lon_min, lon_max)
-        print(annee)
+        AFFICHAGE(moy_T_IDF_canicule, anomalie_par_melun,i_param, year, lat_min, lat_max, lon_min, lon_max)
+        print(year)
