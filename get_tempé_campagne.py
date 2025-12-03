@@ -13,9 +13,10 @@ parametre = ["tasAdjust", "tasmaxAdjust", "tasminAdjust"]
 periode = ["20150101-20191231","20200101-20291231","20300101-20391231","20400101-20491231",
            "20500101-20591231","20600101-20691231","20700101-20791231","20800101-20891231",
            "20900101-20991231"]
+periode_bis = ["2015-2019","2020-2029","2030,2039","2040-2049","2050-2059","2060-2069","2070-2079","2080-2089","2090-2099"]
 
 i_param = 0
-i_periode = 0
+i_periode = 6
 
 chemin_file = f"../CPRCM/ssp370/{parametre[i_param]}/"
 nom_fichier = (
@@ -28,7 +29,7 @@ T_data = xr.open_dataset(chemin_file + nom_fichier)
 
 
 ###########################################
-#   Masque rectangle SANS sel() (robuste)
+#   Masque rectangle
 ###########################################
 def mask_rectangle(data, lat_min, lat_max, lon_min, lon_max):
     """
@@ -124,7 +125,7 @@ mm0 = ax.pcolormesh(
 )
 cbar0 = plt.colorbar(mm0, ax=ax, orientation='vertical', shrink=0.7)
 cbar0.set_label('Température moyenne (°C)', fontsize=12)
-ax.set_title("Température moyenne 2015–2019", fontsize=14)
+ax.set_title(f"Température moyenne {periode_bis[i_periode]}", fontsize=14)
 
 # --- Anomalie par rapport à Melun ---
 ax = axs[1]
@@ -150,10 +151,10 @@ mm1 = ax.pcolormesh(
 )
 cbar1 = plt.colorbar(mm1, ax=ax, orientation='vertical', shrink=0.7)
 cbar1.set_label('Anomalie par rapport à Melun (°C)', fontsize=12)
-ax.set_title("Anomalie par rapport à Melun 2015–2019", fontsize=14)
+ax.set_title(f"Anomalie par rapport à Melun {periode_bis[i_periode]}", fontsize=14)
 
 # Sauvegarde
 chemin_fig = "Cartes/"
 os.makedirs(chemin_fig, exist_ok=True)
-plt.savefig(chemin_fig + "carte_tasAdjust_IDF_2015_2019_double.png", dpi=200)
+plt.savefig(chemin_fig + f"carte_{parametre[i_param]}_IDF_{periode_bis[i_periode]}_double.png", dpi=200)
 plt.close()
