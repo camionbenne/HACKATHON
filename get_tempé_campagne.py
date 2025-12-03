@@ -2,6 +2,7 @@ import xarray as xr
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import matplotlib.colors as colors
 import cartopy.crs as ccrs
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 import matplotlib.ticker as mticker
@@ -117,6 +118,12 @@ gl.yformatter = LONGITUDE_FORMATTER
 gl.xlocator = mticker.FixedLocator(np.arange(lon_lim_idf[0], lon_lim_idf[1]+0.1, 0.2))
 gl.ylocator = mticker.FixedLocator(np.arange(lat_lim_idf[0], lat_lim_idf[1]+0.1, 0.2))
 
+#colormap
+cmap = colors.ListedColormap(['#ffffbb', '#ffff99', '#ff8000', '#ff2a00', '#990000', '#660000'])
+boundaries = [0, 1, 2, 3, 4, 5, 10]
+norm = colors.BoundaryNorm(boundaries, cmap.N, clip=True)
+
+
 mm0 = ax.pcolormesh(
     lons_data, lats_data, moy_data,
     vmin=np.nanmin(moy_data), vmax=np.nanmax(moy_data),
@@ -144,9 +151,8 @@ gl.ylocator = mticker.FixedLocator(np.arange(lat_lim_idf[0], lat_lim_idf[1]+0.1,
 
 mm1 = ax.pcolormesh(
     lons_data, lats_data, anomalie_par_melun,
-    vmin=-np.nanmax(abs(anomalie_par_melun)),
-    vmax=np.nanmax(abs(anomalie_par_melun)),
-    cmap='coolwarm', shading='auto',
+    norm=norm,
+    cmap=cmap, shading='auto',
     transform=ccrs.PlateCarree()
 )
 cbar1 = plt.colorbar(mm1, ax=ax, orientation='vertical', shrink=0.7)
