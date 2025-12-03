@@ -163,7 +163,7 @@ anomalie_par_melun = moy_T_IDF_canicule - moy_T_melun_canicule
 ###########################################
 #   AFFICHAGE
 ###########################################
-def AFFICHAGE(i_param, i_periode):
+def AFFICHAGE(i_param, i_periode, lat_min, lat_max, lon_min, lon_max):
     lats_data = T_data_IDF['lat'].values
     lons_data = T_data_IDF['lon'].values
 
@@ -178,7 +178,7 @@ def AFFICHAGE(i_param, i_periode):
 
     # --- Température moyenne ---
     ax = axs[0]
-    ax.set_extent([lon_lim_idf[0], lon_lim_idf[1], lat_lim_idf[0], lat_lim_idf[1]], crs=ccrs.PlateCarree())
+    ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     ax.coastlines('10m', color='black', linewidth=0.8)
 
     # Grille
@@ -187,8 +187,8 @@ def AFFICHAGE(i_param, i_periode):
     gl.right_labels = False
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LONGITUDE_FORMATTER
-    gl.xlocator = mticker.FixedLocator(np.arange(lon_lim_idf[0], lon_lim_idf[1]-0.1, 0.2))
-    gl.ylocator = mticker.FixedLocator(np.arange(lat_lim_idf[0], lat_lim_idf[1]+0.1, 0.2))
+    gl.xlocator = mticker.FixedLocator(np.arange(lon_min, lon_max-0.1, 0.2))
+    gl.ylocator = mticker.FixedLocator(np.arange(lat_min, lat_max+0.1, 0.2))
 
     #colormap
     couleurs = ['#ffffff',  '#ffffbb',  '#ffff99', '#ffff22','#fff000',  '#ff8000','#ff8800', '#ff2a00','#dd3300', '#990000','#770000', '#550000']
@@ -218,7 +218,7 @@ def AFFICHAGE(i_param, i_periode):
 
     # --- Anomalie par rapport à Melun ---
     ax = axs[1]
-    ax.set_extent([lon_lim_idf[0], lon_lim_idf[1], lat_lim_idf[0], lat_lim_idf[1]], crs=ccrs.PlateCarree())
+    ax.set_extent([lon_min, lon_max, lat_min, lat_max], crs=ccrs.PlateCarree())
     ax.coastlines('10m', color='black', linewidth=0.8)
 
     # Grille
@@ -227,8 +227,8 @@ def AFFICHAGE(i_param, i_periode):
     gl.right_labels = False
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LONGITUDE_FORMATTER
-    gl.xlocator = mticker.FixedLocator(np.arange(lon_lim_idf[0], lon_lim_idf[1]+0.1, 0.2))
-    gl.ylocator = mticker.FixedLocator(np.arange(lat_lim_idf[0], lat_lim_idf[1]+0.1, 0.2))
+    gl.xlocator = mticker.FixedLocator(np.arange(lon_min, lon_max+0.1, 0.2))
+    gl.ylocator = mticker.FixedLocator(np.arange(lat_min, lat_max+0.1, 0.2))
 
 
     mm1 = ax.pcolormesh(
